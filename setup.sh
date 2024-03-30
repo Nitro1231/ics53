@@ -33,10 +33,24 @@ sudo echo "share /home/$USER/share virtiofs rw,nofail 0 0" | sudo tee -a /etc/fs
 sudo mv /usr/bin/gcc-9 /usr/bin/gcc
 sed -i '$d' ~/.bashrc
 
-# Disable memory randomize
-sudo sh -c 'echo 0 > /proc/sys/kernel/randomize_va_space'
-
 # Fix ~/.bashrc error
 sudo echo "fi" | sudo tee -a ~/.bashrc
+
+# Disable memory randomize (ASLR)
+# Check if ASLR setting is already defined
+sudo grep -q "^kernel.randomize_va_space=" /etc/sysctl.conf
+
+if [ $? -eq 0 ]; then
+  # Entry found; replace it
+  sudo sed -i 's/^kernel.randomize_va_space=.*/kernel.randomize_va_space=0/' /etc/sysctl.conf
+else
+  # Entry not found; add it
+  echo "kernel.randomize_va_space=0" >> /etc/sysctl.conf
+fi
+
+# Apply changes
+sudo sysctl -p
+
+echo "ASLR has been permanently disabled."
 
 echo "Installation finished (Last updated Mar 30, 2024)"
