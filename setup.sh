@@ -33,6 +33,11 @@ sudo apt install ./vscode.deb
 # Add UTM shared folder
 mkdir share
 sudo chmod -R 777 share
+
+# The following command has an error:
+# Since this entire setup script will require root permission, $USER will
+# return "root" as a user name, which differs from the one students will use.
+# They should run this line of code by themselves. For now :)
 sudo echo "share /home/$USER/share virtiofs rw,nofail 0 0" | sudo tee -a /etc/fstab
 
 # Replace gcc with gcc-9
